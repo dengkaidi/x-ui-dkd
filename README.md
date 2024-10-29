@@ -1,6 +1,7 @@
 # x-ui
 
 支持多协议多用户的 xray 面板
+>声明：该项目仅供个人学习、交流，请遵守当地法律法规,勿用于非法用途;请勿用于生产环境
 
 # 功能介绍
 
@@ -17,12 +18,12 @@
 # 安装&升级
 
 ```
-bash <(curl -Ls https://raw.githubusercontent.com/vaxilu/x-ui/master/install.sh)
+bash <(curl -Ls https://raw.githubusercontent.com/dengkaidi/x-ui-dkd/master/install.sh)
 ```
 
 ## 手动安装&升级
 
-1. 首先从 https://github.com/vaxilu/x-ui/releases 下载最新的压缩包，一般选择 `amd64`架构
+1. 首先从 https://github.com/dengkaidi/x-ui-dkd/releases 下载最新的压缩包，一般选择 `amd64`架构
 2. 然后将这个压缩包上传到服务器的 `/root/`目录下，并使用 `root`用户登录服务器
 
 > 如果你的服务器 cpu 架构不是 `amd64`，自行将命令中的 `amd64`替换为其他架构
