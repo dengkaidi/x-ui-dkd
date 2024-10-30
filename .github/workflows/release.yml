@@ -32,23 +32,9 @@ jobs:
         with:
           go-version: 1.18
           
-      - name: Install glibc 2.31
-        run: |
-          sudo apt-get update && sudo apt-get install -y build-essential wget
-          wget http://ftp.gnu.org/gnu/libc/glibc-2.31.tar.gz
-          tar -xvzf glibc-2.31.tar.gz
-          cd glibc-2.31
-          mkdir build && cd build
-          ../configure --prefix=/opt/glibc-2.31
-          make -j$(nproc)
-          sudo make install
-          echo "/opt/glibc-2.31/lib" | sudo tee -a /etc/ld.so.conf.d/glibc-2.31.conf
-          sudo ldconfig
-
       - name: build linux amd64 version
         run: |
-          export LD_LIBRARY_PATH=/opt/glibc-2.31/lib:$LD_LIBRARY_PATH
-          CGO_ENABLED=1 GOOS=linux GOARCH=amd64 go build -o xui-release -v main.go
+          CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o xui-release -v main.go
           mkdir x-ui
           cp xui-release x-ui/xui-release
           cp x-ui.service x-ui/x-ui.service
