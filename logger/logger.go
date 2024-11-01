@@ -1,29 +1,36 @@
 package logger
 
 import (
+	"fmt"
 	"os"
+	"path/filepath"
+	"runtime"
 
-	"github.com/op/go-logging"
+	log "github.com/sirupsen/logrus"
 )
 
-var logger *logging.Logger
+var logger *log.Logger
 
 func init() {
-	InitLogger(logging.INFO)
+	InitLogger(log.InfoLevel)
 }
 
-func InitLogger(level logging.Level) {
-	format := logging.MustStringFormatter(
-		`%{time:2006/01/02 15:04:05} %{level} %{shortfile} - %{message}`,
-	)
-	newLogger := logging.MustGetLogger("x-ui")
-	backend := logging.NewLogBackend(os.Stderr, "", 0)
-	backendFormatter := logging.NewBackendFormatter(backend, format)
-	backendLeveled := logging.AddModuleLevel(backendFormatter)
-	backendLeveled.SetLevel(level, "")
-	newLogger.SetBackend(backendLeveled)
+func InitLogger(level log.Level) {
+	logger = log.New()
+	logger.SetOutput(os.Stderr)
 
-	logger = newLogger
+	logger.SetFormatter(&log.TextFormatter{
+		DisableColors:   false,
+		FullTimestamp:   true,
+		TimestampFormat: "2006-01-02 15:04:05",
+		// 启用短文件名和行号
+		CallerPrettyfier: func(f *runtime.Frame) (string, string) {
+			return filepath.Base(f.File), fmt.Sprintf("%d", f.Line)
+		},
+	})
+
+	logger.ReportCaller = true
+	logger.Level = level
 }
 
 func Debug(args ...interface{}) {

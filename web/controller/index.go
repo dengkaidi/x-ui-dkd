@@ -57,16 +57,23 @@ func (a *IndexController) login(c *gin.Context) {
 		pureJsonMsg(c, false, "请输入密码")
 		return
 	}
+	if !a.userService.CanLogin(form.Username) {
+		logger.Warningf("username: %s is lock, ip:%s", form.Username, getRemoteIp(c))
+		pureJsonMsg(c, false, "当前用户已锁定，请稍后再试")
+		return
+	}
 	user := a.userService.CheckUser(form.Username, form.Password)
 	timeStr := time.Now().Format("2006-01-02 15:04:05")
 	if user == nil {
-		job.NewStatsNotifyJob().UserLoginNotify(form.Username, getRemoteIp(c), timeStr, 0)
+		go job.NewStatsNotifyJob().UserLoginNotify(form.Username, getRemoteIp(c), timeStr, 0)
 		logger.Infof("wrong username or password: \"%s\" \"%s\"", form.Username, form.Password)
+		a.userService.LoginFailedAccumulate(form.Username)
 		pureJsonMsg(c, false, "用户名或密码错误")
 		return
 	} else {
 		logger.Infof("%s login success,Ip Address:%s\n", form.Username, getRemoteIp(c))
-		job.NewStatsNotifyJob().UserLoginNotify(form.Username, getRemoteIp(c), timeStr, 1)
+		go job.NewStatsNotifyJob().UserLoginNotify(form.Username, getRemoteIp(c), timeStr, 1)
+		a.userService.ResetFailures(form.Username)
 	}
 
 	err = session.SetLoginUser(c, user)

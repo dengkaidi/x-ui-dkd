@@ -16,7 +16,7 @@ import (
 	"x-ui/web/global"
 	"x-ui/web/service"
 
-	"github.com/op/go-logging"
+	"github.com/sirupsen/logrus"
 )
 
 func runWebServer() {
@@ -24,13 +24,13 @@ func runWebServer() {
 
 	switch config.GetLogLevel() {
 	case config.Debug:
-		logger.InitLogger(logging.DEBUG)
+		logger.InitLogger(logrus.DebugLevel)
 	case config.Info:
-		logger.InitLogger(logging.INFO)
+		logger.InitLogger(logrus.InfoLevel)
 	case config.Warn:
-		logger.InitLogger(logging.WARNING)
+		logger.InitLogger(logrus.WarnLevel)
 	case config.Error:
-		logger.InitLogger(logging.ERROR)
+		logger.InitLogger(logrus.ErrorLevel)
 	default:
 		log.Fatal("unknown log level:", config.GetLogLevel())
 	}
